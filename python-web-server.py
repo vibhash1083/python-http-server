@@ -1,6 +1,8 @@
 #!/usr/bin/python
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
+from db import get_notes, close_connection
+TEMPLATE_PATH = "C:\\Users\\maya.mishra\\Documents\\projects\\python-http-server\\"
 PORT_NUMBER = 9000
 
 # Custom handler for HTTP requests
@@ -23,22 +25,30 @@ class CustomRequestHandler(BaseHTTPRequestHandler):
         self._set_headers()
         if self.path == '/':
             # opening home page
-            home_template_file = open('C:\\Users\maya.mishra\\Desktop\\Http server\\python-http-server\\home.html').read()
-            self.wfile.write(bytes(home_template_file, 'utf-8'))
-        elif self.path == '/form/':
+            db_values = get_notes()
+            # close_connection()
+            print("Data ", str(db_values))
+            home_template_file = open(TEMPLATE_PATH + 'home.html').read()
+            updated_home_template = home_template_file.replace("data", str(db_values))
+            print(updated_home_template)
+            self.wfile.write(bytes(updated_home_template, 'utf-8'))
+        elif self.path == '/form':
             # opening form
-            form_template_file = open('C:\\Users\maya.mishra\\Desktop\\Http server\\python-http-server\\form.html').read()
+            form_template_file = open(TEMPLATE_PATH + 'form.html').read()
             self.wfile.write(bytes(form_template_file, 'utf-8'))
 
     def do_HEAD(self):
         self._set_headers()
 
-    # def do_POST(self):
-    #     # Doesn't do anything with posted data
-    #     self._set_headers()
-    #     # file_to_open = open('C:\\Users\maya.mishra\\Desktop\\Http server\\python-http-server\\form.html').read()
-    #     # self.wfile.write(self._html("POST!"))
-    #     self.wfile.write()
+    def do_POST(self):
+        if self.path == '/form':
+            self._set_headers()
+            name = ''
+            # Get post request data
+            # call add_notes
+            add_notes(name)
+            # if success
+            self.wfile.write()
 
 # Create a web server and define the handler to manage the
 server = HTTPServer(('', PORT_NUMBER), CustomRequestHandler)
