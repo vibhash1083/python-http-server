@@ -39,13 +39,14 @@ def get_notes():
 def add_notes(name):
     from datetime import datetime
     current_date = datetime.today().strftime('%Y-%m-%d')
-    max_id_query = "Select max(id) from note"
-    # Execute Query and fetch max id
-    # Increment by 1 to get next id
-    id = 0
+    id = 100
     # use id, name, current_date to create a new entry in db
 
     # implement notes
+    insert_query = "insert into note(id,name) values (112, '" + name +"')"
+    print(insert_query)
+    if cursor:
+        cursor.execute(insert_query)
     return True
 
 

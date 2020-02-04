@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-from db import get_notes, close_connection
+from db import get_notes, close_connection, add_notes
 TEMPLATE_PATH = "C:\\Users\\maya.mishra\\Documents\\projects\\python-http-server\\"
 PORT_NUMBER = 9000
 
@@ -42,13 +42,18 @@ class CustomRequestHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if self.path == '/form':
+            print("Post request sent ")
             self._set_headers()
             name = ''
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode("utf-8")
+            name = post_data.replace("name=", "")
+            print(name)
             # Get post request data
             # call add_notes
             add_notes(name)
             # if success
-            self.wfile.write()
+            self.wfile.write(self._html("Value submitted!"))
 
 # Create a web server and define the handler to manage the
 server = HTTPServer(('', PORT_NUMBER), CustomRequestHandler)
